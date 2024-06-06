@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 class CurrencyService: CurrencyServiceProtocol {
-    let apiKey = "8b3be48fdb7337bf7cc4c2dc"
+    let apiKey = Secrets.apiKey
     let baseURL = "https://v6.exchangerate-api.com/v6/"
     
     let countryMapping: [String: String] = [

@@ -16,6 +16,7 @@
 		C0667C762C11AB0D00306D90 /* CurrencyServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0667C752C11AB0D00306D90 /* CurrencyServiceProtocol.swift */; };
 		C0667C782C11AB3500306D90 /* CurrencyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0667C772C11AB3500306D90 /* CurrencyService.swift */; };
 		C0667C7A2C11AB4F00306D90 /* CurrencyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0667C792C11AB4F00306D90 /* CurrencyViewModel.swift */; };
+		C0667C7C2C11D42800306D90 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0667C7B2C11D42800306D90 /* Secrets.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		C0667C752C11AB0D00306D90 /* CurrencyServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyServiceProtocol.swift; sourceTree = "<group>"; };
 		C0667C772C11AB3500306D90 /* CurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyService.swift; sourceTree = "<group>"; };
 		C0667C792C11AB4F00306D90 /* CurrencyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyViewModel.swift; sourceTree = "<group>"; };
+		C0667C7B2C11D42800306D90 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 				C0667C752C11AB0D00306D90 /* CurrencyServiceProtocol.swift */,
 				C0667C772C11AB3500306D90 /* CurrencyService.swift */,
 				C0667C792C11AB4F00306D90 /* CurrencyViewModel.swift */,
+				C0667C7B2C11D42800306D90 /* Secrets.swift */,
 				C0667C712C11AA4700306D90 /* .gitignore */,
 				C0667C672C11A8AE00306D90 /* Assets.xcassets */,
 				C0667C692C11A8AE00306D90 /* Preview Content */,
@@ -155,6 +158,7 @@
 			files = (
 				C0667C782C11AB3500306D90 /* CurrencyService.swift in Sources */,
 				C0667C7A2C11AB4F00306D90 /* CurrencyViewModel.swift in Sources */,
+				C0667C7C2C11D42800306D90 /* Secrets.swift in Sources */,
 				C0667C742C11AAEE00306D90 /* Model.swift in Sources */,
 				C0667C662C11A8AD00306D90 /* ContentView.swift in Sources */,
 				C0667C762C11AB0D00306D90 /* CurrencyServiceProtocol.swift in Sources */,
