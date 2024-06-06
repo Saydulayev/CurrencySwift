@@ -56,3 +56,5 @@ fastlane/screenshots/**/*.png
 timeline.xctimeline
 playground.xcworkspace
 
+# Secrets
+Secrets.swift
