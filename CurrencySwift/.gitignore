@@ -1,44 +1,36 @@
 # Xcode
-#
 build/
 DerivedData/
 *.xcworkspace
 xcuserdata/
 *.xcodeproj/project.xcworkspace/
 *.xcodeproj/xcuserdata/
-*.xcodeproj/project.xcworkspace/
 *.xcodeproj/xcshareddata/
 
 # Swift Package Manager
-#
 .build/
 Packages/
 Package.pins
 Package.resolved
 
 # CocoaPods
-#
 Pods/
 Podfile.lock
 *.xcworkspace
 
 # Carthage
-#
 Carthage/Build/
 
 # fastlane
-#
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 
 # Code Coverage
-#
 *.xccoverage
 !default.xccoverage
 
 # Other
-#
 .DS_Store
 .idea/
 *.moved-aside
@@ -46,7 +38,6 @@ fastlane/screenshots/**/*.png
 *.hmap
 
 # Obj-C/Swift specific
-#
 *.hmap
 *.ipa
 *.dSYM.zip
@@ -56,5 +47,5 @@ fastlane/screenshots/**/*.png
 timeline.xctimeline
 playground.xcworkspace
 
-# Secrets
-Secrets.swift
+# Ignore Secrets.template.swift file
+Secrets.template.swift
