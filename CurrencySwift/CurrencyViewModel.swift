@@ -206,8 +206,8 @@ class CurrencyViewModel: ObservableObject {
         "ZMW": "Zambia",
         "ZWL": "Zimbabwe"
     ]
-
-
+    
+    
     
     init(currencyService: CurrencyServiceProtocol) {
         self.currencyService = currencyService
@@ -231,7 +231,7 @@ class CurrencyViewModel: ObservableObject {
                 }
             } receiveValue: { [weak self] data in
                 guard let self = self else { return }
-                self.errorMessage = nil
+                self.errorMessage = nil // Сброс ошибки при успешном получении данных
                 self.currencyRates = data.conversionRates.map { (key, value) in
                     let country = self.allCurrencies[key] ?? "Unknown"
                     return CurrencyRate(code: key, rate: value, isFavorite: self.favorites.contains(key), country: country)

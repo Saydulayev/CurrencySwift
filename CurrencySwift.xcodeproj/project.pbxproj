@@ -17,7 +17,9 @@
 		C0667C782C11AB3500306D90 /* CurrencyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0667C772C11AB3500306D90 /* CurrencyService.swift */; };
 		C0667C7A2C11AB4F00306D90 /* CurrencyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0667C792C11AB4F00306D90 /* CurrencyViewModel.swift */; };
 		C0667C802C11D72D00306D90 /* Secrets.template.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0667C7F2C11D72D00306D90 /* Secrets.template.swift */; };
-		C0EEB1FD2C184605000E5C60 /* DoneButtonModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EEB1FC2C184604000E5C60 /* DoneButtonModifier.swift */; };
+		C084BF4E2C19953000E901C5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084BF4D2C19953000E901C5 /* SettingsView.swift */; };
+		C084BF502C199C2900E901C5 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084BF4F2C199C2800E901C5 /* MailView.swift */; };
+		C084BF522C19A0FC00E901C5 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084BF512C19A0FB00E901C5 /* ActivityView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,7 +34,9 @@
 		C0667C772C11AB3500306D90 /* CurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyService.swift; sourceTree = "<group>"; };
 		C0667C792C11AB4F00306D90 /* CurrencyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyViewModel.swift; sourceTree = "<group>"; };
 		C0667C7F2C11D72D00306D90 /* Secrets.template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.template.swift; sourceTree = "<group>"; };
-		C0EEB1FC2C184604000E5C60 /* DoneButtonModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoneButtonModifier.swift; sourceTree = "<group>"; };
+		C084BF4D2C19953000E901C5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C084BF4F2C199C2800E901C5 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
+		C084BF512C19A0FB00E901C5 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +76,9 @@
 				C0667C772C11AB3500306D90 /* CurrencyService.swift */,
 				C0667C792C11AB4F00306D90 /* CurrencyViewModel.swift */,
 				C0667C7F2C11D72D00306D90 /* Secrets.template.swift */,
-				C0EEB1FC2C184604000E5C60 /* DoneButtonModifier.swift */,
+				C084BF4D2C19953000E901C5 /* SettingsView.swift */,
+				C084BF4F2C199C2800E901C5 /* MailView.swift */,
+				C084BF512C19A0FB00E901C5 /* ActivityView.swift */,
 				C0667C712C11AA4700306D90 /* .gitignore */,
 				C0667C672C11A8AE00306D90 /* Assets.xcassets */,
 				C0667C692C11A8AE00306D90 /* Preview Content */,
@@ -160,12 +166,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0667C782C11AB3500306D90 /* CurrencyService.swift in Sources */,
+				C084BF4E2C19953000E901C5 /* SettingsView.swift in Sources */,
 				C0667C7A2C11AB4F00306D90 /* CurrencyViewModel.swift in Sources */,
+				C084BF522C19A0FC00E901C5 /* ActivityView.swift in Sources */,
 				C0667C742C11AAEE00306D90 /* Model.swift in Sources */,
 				C0667C802C11D72D00306D90 /* Secrets.template.swift in Sources */,
-				C0EEB1FD2C184605000E5C60 /* DoneButtonModifier.swift in Sources */,
 				C0667C662C11A8AD00306D90 /* ContentView.swift in Sources */,
 				C0667C762C11AB0D00306D90 /* CurrencyServiceProtocol.swift in Sources */,
+				C084BF502C199C2900E901C5 /* MailView.swift in Sources */,
 				C0667C642C11A8AD00306D90 /* CurrencySwiftApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

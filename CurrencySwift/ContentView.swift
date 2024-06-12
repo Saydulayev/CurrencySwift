@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel: CurrencyViewModel
+    @State private var showingSettings = false
     
     init(viewModel: CurrencyViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -40,13 +41,23 @@ struct ContentView: View {
                 }
                 .navigationTitle("Currency Converter 💱")
                 .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(destination: SettingsView()) {
+                            Image(systemName: "circle.grid.2x2.fill")
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
                 .sheet(isPresented: $viewModel.isShowingBaseCurrencySheet) {
                     BaseCurrencySheetView(viewModel: viewModel)
+                        .ignoresSafeArea()
                 }
             }
         }
     }
 }
+
 
 
 
@@ -82,6 +93,7 @@ struct BaseCurrencyInputView: View {
             })
         }
         .padding()
+        .background(.blue.opacity(0.5))
     }
 }
 
@@ -104,7 +116,7 @@ struct AmountInputView: View {
             .font(.title2)
             .foregroundColor(.primary)
             .padding(14)
-            .padding(.horizontal, 0)
+            .padding(.horizontal, 2)
             .background(Color.blue.opacity(0.5))
             .cornerRadius(15)
         }
@@ -217,15 +229,26 @@ struct BaseCurrencySheetView: View {
     var body: some View {
         VStack {
             HStack {
-                TextField("Search Base Currency...", text: $viewModel.baseCurrency)
-                    .padding()
-                    .foregroundColor(.primary)
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(15)
-                    .shadow(radius: 5)
-                    .onChange(of: viewModel.baseCurrency) { newValue in
-                        viewModel.filterBaseCurrency()
+                ZStack(alignment: .trailing) {
+                    TextField("Search Base Currency...", text: $viewModel.baseCurrency)
+                        .padding()
+                        .foregroundColor(.primary)
+                        .background(Color(UIColor.secondarySystemBackground))
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
+                        .onChange(of: viewModel.baseCurrency) { newValue in
+                            viewModel.filterBaseCurrency()
                     }
+                    Button(action: {
+                        withAnimation {
+                            viewModel.baseCurrency = ""
+                        }
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.blue)
+                            .padding(.trailing, 10)
+                    }
+                }
                 
                 Button("Cancel") {
                     withAnimation {
@@ -250,7 +273,7 @@ struct BaseCurrencySheetView: View {
                                 .foregroundColor(.primary)
                                 .padding()
                                 .frame(maxWidth: .infinity)
-                                .background(Color(UIColor.secondarySystemBackground))
+                                .background(.ultraThinMaterial)
                                 .cornerRadius(15)
                                 .onTapGesture {
                                     withAnimation {
@@ -264,6 +287,8 @@ struct BaseCurrencySheetView: View {
                 }
             }
             .padding(.horizontal)
+            .shadow(color: .secondary, radius: 1)
+
         }
         .background(Color(.systemGray6).ignoresSafeArea())
     }
@@ -274,8 +299,6 @@ extension View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
-
-
 
 
 
