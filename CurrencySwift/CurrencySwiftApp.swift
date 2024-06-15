@@ -11,7 +11,7 @@ import SwiftUI
 struct CurrencySwiftApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(viewModel: CurrencyViewModel(currencyService: CurrencyService()))
+            ContentView(viewModel: CurrencyViewModel(currencyService: CurrencyService.shared, sortingStrategy: FavoriteFirstSortingStrategy()))
         }
     }
 }

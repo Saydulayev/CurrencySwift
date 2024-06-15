@@ -109,14 +109,19 @@ struct AmountInputView: View {
                 .cornerRadius(15)
                 .shadow(radius: 5)
                 .keyboardType(.decimalPad)
-            
-            Button("Done") {
+            Button(action: {
                 hideKeyboard()
+            }) {
+                if viewModel.baseCurrency.isEmpty {
+                    Image(systemName: "eurosign.arrow.circlepath")
+                } else {
+                    Text(viewModel.baseCurrency)
+                }
             }
             .font(.title2)
             .foregroundColor(.primary)
             .padding(14)
-            .padding(.horizontal, 2)
+            .padding(.horizontal, 5)
             .background(Color.blue.opacity(0.5))
             .cornerRadius(15)
         }
@@ -308,8 +313,9 @@ extension View {
 
 
 #Preview {
-    ContentView(viewModel: CurrencyViewModel(currencyService: CurrencyService()))
+    ContentView(viewModel: CurrencyViewModel(currencyService: CurrencyService.shared, sortingStrategy: FavoriteFirstSortingStrategy()))
 }
+
 
 
 /*

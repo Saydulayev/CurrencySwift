@@ -9,6 +9,12 @@ import Foundation
 import Combine
 
 class CurrencyService: CurrencyServiceProtocol {
+    // Статическое свойство для единственного экземпляра
+    static let shared = CurrencyService()
+    
+    // Приватный инициализатор, чтобы предотвратить создание дополнительных экземпляров
+    private init() {}
+
     let apiKey = Secrets.apiKey
     let baseURL = "https://v6.exchangerate-api.com/v6/"
     
