@@ -25,13 +25,21 @@ struct ContentView: View {
                     }
                 
                 VStack(spacing: 20) {
-                    BaseCurrencyInputView(viewModel: viewModel)
+                    VStack {
+                        BaseCurrencyInputView(viewModel: viewModel)
+                        
+                        AmountInputView(viewModel: viewModel)
+                        
+                        DividerView()
+
+                    }
+                    .background(.blue)
+
                     
-                    AmountInputView(viewModel: viewModel)
                     
-                    DividerView()
-                    
-                    SearchCurrencyInputView(viewModel: viewModel)
+                    if viewModel.isConverted {
+                                            SearchCurrencyInputView(viewModel: viewModel)
+                                        }
                     
                     if let errorMessage = viewModel.errorMessage {
                         ErrorMessageView(errorMessage: errorMessage)
@@ -58,15 +66,12 @@ struct ContentView: View {
     }
 }
 
-
-
-
 struct BaseCurrencyInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
     
     var body: some View {
         ZStack(alignment: .trailing) {
-            TextField("Enter Base Currency...", text: $viewModel.baseCurrency)
+            TextField("Select Base Currency...", text: $viewModel.baseCurrency)
                 .foregroundColor(.primary)
                 .padding()
                 .background(Color(UIColor.secondarySystemBackground))
@@ -88,12 +93,15 @@ struct BaseCurrencyInputView: View {
                     .foregroundColor(.primary)
                     .padding(13)
                     .padding(.horizontal, 15)
-                    .background(Color.blue.opacity(0.5))
+                    .background(.blue)
                     .cornerRadius(15)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 15)
+                            .stroke(Color.primary, lineWidth: 1)
+                    )
             })
         }
         .padding()
-        .background(.blue.opacity(0.5))
     }
 }
 
@@ -102,18 +110,29 @@ struct AmountInputView: View {
     
     var body: some View {
         ZStack(alignment: .trailing) {
-            TextField("Amount", value: $viewModel.amount, formatter: NumberFormatter())
+            TextField("Amount", value: $viewModel.amount, formatter: NumberFormatter.currencyFormatter)
                 .foregroundColor(.primary)
                 .padding()
                 .background(Color(UIColor.secondarySystemBackground))
                 .cornerRadius(15)
                 .shadow(radius: 5)
                 .keyboardType(.decimalPad)
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button("Done") {
+                            hideKeyboard()
+                        }
+                    }
+                }
             Button(action: {
                 hideKeyboard()
             }) {
                 if viewModel.baseCurrency.isEmpty {
                     Image(systemName: "eurosign.arrow.circlepath")
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 1)
+                        
                 } else {
                     Text(viewModel.baseCurrency)
                 }
@@ -121,9 +140,13 @@ struct AmountInputView: View {
             .font(.title2)
             .foregroundColor(.primary)
             .padding(14)
-            .padding(.horizontal, 5)
-            .background(Color.blue.opacity(0.5))
+            .padding(.horizontal, 7)
+            .background(.blue)
             .cornerRadius(15)
+            .overlay(
+                RoundedRectangle(cornerRadius: 15)
+                    .stroke(Color.primary, lineWidth: 1)
+            )
         }
         .padding()
     }
@@ -132,9 +155,9 @@ struct AmountInputView: View {
 struct DividerView: View {
     var body: some View {
         Rectangle()
-            .frame(height: 0.3)
+            .frame(height: 2)
             .frame(maxWidth: .infinity)
-            .foregroundColor(Color(UIColor.separator))
+            .foregroundColor(.primary)
     }
 }
 
@@ -293,7 +316,6 @@ struct BaseCurrencySheetView: View {
             }
             .padding(.horizontal)
             .shadow(color: .secondary, radius: 1)
-
         }
         .background(Color(.systemGray6).ignoresSafeArea())
     }
@@ -305,16 +327,20 @@ extension View {
     }
 }
 
-
-
-
-
-
+extension NumberFormatter {
+    static var currencyFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 2
+        return formatter
+    }
+}
 
 
 #Preview {
     ContentView(viewModel: CurrencyViewModel(currencyService: CurrencyService.shared, sortingStrategy: FavoriteFirstSortingStrategy()))
 }
+
 
 
 
