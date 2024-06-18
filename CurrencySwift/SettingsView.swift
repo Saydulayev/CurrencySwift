@@ -73,11 +73,7 @@ struct FeedbackSection: View {
                     Text("Send Feedback")
                     Spacer()
                 }
-                .foregroundStyle(.black)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(.blue.opacity(0.5))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .customStyled()
             }
         }
         .sheet(isPresented: $isShowingMailView) {
@@ -105,11 +101,7 @@ struct RateAppSection: View {
                     Text("Rate this App")
                     Spacer()
                 }
-                .foregroundStyle(.black)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(.blue.opacity(0.5))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .customStyled()
             }
         }
     }
@@ -128,11 +120,7 @@ struct ShareAppSection: View {
                     Text("Share this App")
                     Spacer()
                 }
-                .foregroundStyle(.black)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(.blue.opacity(0.5))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .customStyled()
             }
         }
         .sheet(isPresented: $isShowingActivityView) {
@@ -142,6 +130,27 @@ struct ShareAppSection: View {
 }
 
 
+
+struct CustomStyledModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundStyle(.black)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.blue.opacity(0.5))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.primary, lineWidth: 1)
+            )
+    }
+}
+
+extension View {
+    func customStyled() -> some View {
+        self.modifier(CustomStyledModifier())
+    }
+}
 
 
 
