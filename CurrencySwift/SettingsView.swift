@@ -43,7 +43,6 @@ struct RateAppCommand: Command {
     }
 }
 
-
 struct SettingsView: View {
     @ObservedObject var viewModel: CurrencyViewModel
     @State private var result: Result<MFMailComposeResult, Error>? = nil
@@ -72,6 +71,19 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
+        .sheet(isPresented: $isShowingMailView) {
+            MailView(result: $result, recipients: ["saydulayev.wien@gmail.com"], subject: "Feedback for CurrencySwift")
+        }
+        .alert(isPresented: $isShowingMailAlert) {
+            Alert(
+                title: Text("Cannot Send Mail"),
+                message: Text("Your device is not configured to send mail. Please set up a mail account in order to send feedback."),
+                dismissButton: .default(Text("OK"))
+            )
+        }
+        .sheet(isPresented: $isShowingActivityView) {
+            ActivityView(activityItems: ["Check out this amazing CurrencySwift app! https://apps.apple.com/app/id1673683355"])
+        }
     }
     
     private func applyTheme(_ theme: AppTheme) {
@@ -110,16 +122,6 @@ struct FeedbackSection: View {
                 .customStyled()
             }
         }
-        .sheet(isPresented: $isShowingMailView) {
-            MailView(result: $result, recipients: ["saydulayev.wien@gmail.com"], subject: "Feedback for CurrencySwift")
-        }
-        .alert(isPresented: $isShowingMailAlert) {
-            Alert(
-                title: Text("Cannot Send Mail"),
-                message: Text("Your device is not configured to send mail. Please set up a mail account in order to send feedback."),
-                dismissButton: .default(Text("OK"))
-            )
-        }
     }
 }
 
@@ -157,9 +159,6 @@ struct ShareAppSection: View {
                 .customStyled()
             }
         }
-        .sheet(isPresented: $isShowingActivityView) {
-            ActivityView(activityItems: ["Check out this amazing CurrencySwift app! https://apps.apple.com/app/id1673683355"])
-        }
     }
 }
 
@@ -183,6 +182,8 @@ extension View {
         self.modifier(CustomStyledModifier())
     }
 }
+
+
 
 
 

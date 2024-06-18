@@ -257,7 +257,7 @@ class CurrencyViewModel: ObservableObject {
                 }
                 self.sortCurrencyRates()
                 self.filterCurrencies()
-                self.isConverted = true // Set isConverted to true after successful conversion
+                self.isConverted = true
             }
             .store(in: &cancellables)
     }
@@ -295,7 +295,7 @@ class CurrencyViewModel: ObservableObject {
         }
     }
     
-     func applyTheme(_ theme: AppTheme) {
+     public func applyTheme(_ theme: AppTheme) {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else {
             return

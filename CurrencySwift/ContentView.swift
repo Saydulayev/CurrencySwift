@@ -14,6 +14,7 @@ struct ContentView: View {
     
     init(viewModel: CurrencyViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
+        viewModel.applyTheme(viewModel.selectedTheme)  
     }
     
     var body: some View {
@@ -65,7 +66,7 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            viewModel.applyTheme(viewModel.selectedTheme) // Apply theme on app launch
+            viewModel.applyTheme(viewModel.selectedTheme)
         }
     }
 }
@@ -171,11 +172,20 @@ struct SearchCurrencyInputView: View {
     
     var body: some View {
         ZStack(alignment: .trailing) {
-            TextField("Search Currency...", text: $viewModel.searchText)
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary)
+                TextField("Search...", text: $viewModel.searchText)
+
+            }
                 .foregroundColor(.primary)
                 .padding(7)
                 .background(Color(UIColor.secondarySystemBackground))
                 .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.blue.opacity(0.5), lineWidth: 1)
+                )
                 .shadow(radius: 5)
             
             if !viewModel.searchText.isEmpty {
