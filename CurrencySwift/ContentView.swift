@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct ContentView: View {
     @StateObject private var viewModel: CurrencyViewModel
     @State private var showingSettings = false
@@ -31,15 +32,15 @@ struct ContentView: View {
                         AmountInputView(viewModel: viewModel)
                         
                         DividerView()
-
+                        
                     }
                     .background(.blue)
-
+                    
                     
                     
                     if viewModel.isConverted {
-                                            SearchCurrencyInputView(viewModel: viewModel)
-                                        }
+                        SearchCurrencyInputView(viewModel: viewModel)
+                    }
                     
                     if let errorMessage = viewModel.errorMessage {
                         ErrorMessageView(errorMessage: errorMessage)
@@ -51,7 +52,7 @@ struct ContentView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: SettingsView()) {
+                        NavigationLink(destination: SettingsView(viewModel: viewModel)) {
                             Image(systemName: "circle.grid.2x2.fill")
                                 .foregroundColor(.primary)
                         }
@@ -62,6 +63,9 @@ struct ContentView: View {
                         .ignoresSafeArea()
                 }
             }
+        }
+        .onAppear {
+            viewModel.applyTheme(viewModel.selectedTheme) // Apply theme on app launch
         }
     }
 }

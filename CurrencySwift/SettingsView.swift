@@ -35,25 +35,59 @@ struct SendFeedbackCommand: Command {
 struct RateAppCommand: Command {
     func execute() {
         guard let writeReviewURL = URL(string: "https://apps.apple.com/app/id1673683355?action=write-review") else { return }
-        if UIApplication.shared.canOpenURL(writeReviewURL) {
-            UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
+        DispatchQueue.main.async {
+            if UIApplication.shared.canOpenURL(writeReviewURL) {
+                UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
+            }
         }
     }
 }
 
+
 struct SettingsView: View {
+    @ObservedObject var viewModel: CurrencyViewModel
     @State private var result: Result<MFMailComposeResult, Error>? = nil
     @State private var isShowingMailView = false
     @State private var isShowingMailAlert = false
     @State private var isShowingActivityView = false
     
     var body: some View {
+        
         Form {
             FeedbackSection(isShowingMailView: $isShowingMailView, isShowingMailAlert: $isShowingMailAlert, result: $result)
             RateAppSection()
             ShareAppSection(isShowingActivityView: $isShowingActivityView)
+            
+            // Добавлена секция для выбора темы
+            Section(header: Text("Appearance")) {
+                Picker("Theme", selection: $viewModel.selectedTheme) {
+                    ForEach(AppTheme.allCases) { theme in
+                        Text(theme.rawValue.capitalized).tag(theme)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .onChange(of: viewModel.selectedTheme) { newValue in
+                    applyTheme(newValue)
+                }
+            }
         }
         .navigationTitle("Settings")
+    }
+    
+    private func applyTheme(_ theme: AppTheme) {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else {
+            return
+        }
+        
+        switch theme {
+        case .light:
+            window.overrideUserInterfaceStyle = .light
+        case .dark:
+            window.overrideUserInterfaceStyle = .dark
+        case .system:
+            window.overrideUserInterfaceStyle = .unspecified
+        }
     }
 }
 
@@ -129,8 +163,6 @@ struct ShareAppSection: View {
     }
 }
 
-
-
 struct CustomStyledModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -151,6 +183,7 @@ extension View {
         self.modifier(CustomStyledModifier())
     }
 }
+
 
 
 
