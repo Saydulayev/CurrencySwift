@@ -171,13 +171,13 @@ struct SearchCurrencyInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
     
     var body: some View {
-        ZStack(alignment: .trailing) {
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(.secondary)
-                TextField("Search...", text: $viewModel.searchText)
-
-            }
+        HStack {
+            ZStack(alignment: .trailing) {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(.secondary)
+                    TextField("Search...", text: $viewModel.searchText)
+                }
                 .foregroundColor(.primary)
                 .padding(7)
                 .background(Color(UIColor.secondarySystemBackground))
@@ -187,18 +187,39 @@ struct SearchCurrencyInputView: View {
                         .stroke(Color.blue.opacity(0.5), lineWidth: 1)
                 )
                 .shadow(radius: 5)
-            
-            if !viewModel.searchText.isEmpty {
-                Button(action: {
-                    withAnimation {
-                        viewModel.searchText = ""
+                
+                if !viewModel.searchText.isEmpty {
+                    Button(action: {
+                        withAnimation {
+                            viewModel.searchText = ""
+                        }
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.blue)
+                            .padding(.trailing, 10)
                     }
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.blue)
-                        .padding(.trailing, 10)
                 }
             }
+            
+            Button(action: {
+                withAnimation {
+                    viewModel.filterOption = .favorites
+                }
+            }) {
+                Image(systemName: "star.fill")
+                    .foregroundColor(viewModel.filterOption == .favorites ? .blue : .gray)
+            }
+            .padding(.horizontal, 5)
+            
+            Button(action: {
+                withAnimation {
+                    viewModel.filterOption = .all
+                }
+            }) {
+                Image(systemName: "list.bullet")
+                    .foregroundColor(viewModel.filterOption == .all ? .blue : .gray)
+            }
+            .padding(.horizontal, 5)
         }
         .padding(.horizontal)
     }

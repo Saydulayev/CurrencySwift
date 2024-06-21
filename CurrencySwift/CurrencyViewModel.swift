@@ -14,6 +14,11 @@ enum AppTheme: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
+enum FilterOption {
+    case all
+    case favorites
+}
+
 class CurrencyViewModel: ObservableObject {
     @Published var currencyRates: [CurrencyRate] = []
     @Published var filteredCurrencyRates: [CurrencyRate] = []
@@ -36,6 +41,11 @@ class CurrencyViewModel: ObservableObject {
         didSet {
             UserDefaults.standard.set(baseCurrency, forKey: "baseCurrency")
             filterBaseCurrency()
+        }
+    }
+    @Published var filterOption: FilterOption = .all {
+        didSet {
+            filterCurrencies()
         }
     }
     @Published var filteredBaseCurrencies: [String] = []
@@ -280,10 +290,19 @@ class CurrencyViewModel: ObservableObject {
     }
     
     private func filterCurrencies() {
-        if searchText.isEmpty {
-            filteredCurrencyRates = currencyRates
-        } else {
-            filteredCurrencyRates = currencyRates.filter { $0.code.lowercased().contains(searchText.lowercased()) }
+        switch filterOption {
+        case .all:
+            if searchText.isEmpty {
+                filteredCurrencyRates = currencyRates
+            } else {
+                filteredCurrencyRates = currencyRates.filter { $0.code.lowercased().contains(searchText.lowercased()) }
+            }
+        case .favorites:
+            if searchText.isEmpty {
+                filteredCurrencyRates = currencyRates.filter { $0.isFavorite }
+            } else {
+                filteredCurrencyRates = currencyRates.filter { $0.isFavorite && $0.code.lowercased().contains(searchText.lowercased()) }
+            }
         }
     }
     
