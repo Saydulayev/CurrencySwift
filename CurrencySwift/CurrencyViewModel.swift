@@ -59,6 +59,10 @@ class CurrencyViewModel: ObservableObject {
         }
     }
     
+    @Published var isLoading: Bool = false // добавлено состояние загрузки
+    @Published var showErrorAlert: Bool = false // добавлено состояние для отображения ошибки
+
+    
     private let currencyService: CurrencyServiceProtocol
     private var cancellables = Set<AnyCancellable>()
     private var sortingStrategy: SortingStrategy
@@ -234,6 +238,7 @@ class CurrencyViewModel: ObservableObject {
      ]
 
 
+
     init(currencyService: CurrencyServiceProtocol = CurrencyService.shared, sortingStrategy: SortingStrategy = FavoriteFirstSortingStrategy()) {
         self.currencyService = currencyService
         self.baseCurrency = UserDefaults.standard.string(forKey: "baseCurrency") ?? "USD"
@@ -251,15 +256,23 @@ class CurrencyViewModel: ObservableObject {
             return
         }
         
+        self.isLoading = true
+        self.showErrorAlert = false
+        
         currencyService.fetchRates(base: base)
+            //.delay(for: .seconds(2), scheduler: DispatchQueue.main) // добавлена задержка для отображения индикатора загрузки
+            .timeout(.seconds(10), scheduler: DispatchQueue.main) // добавлен таймаут
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 guard let self = self else { return }
+                self.isLoading = false
                 if case let .failure(error) = completion {
                     self.errorMessage = error.localizedDescription
+                    self.showErrorAlert = true
                 }
             } receiveValue: { [weak self] data in
                 guard let self = self else { return }
+                self.isLoading = false
                 self.errorMessage = nil
                 self.currencyRates = data.conversionRates.map { (key, value) in
                     let country = self.allCurrencies[key] ?? "Unknown"
@@ -314,7 +327,7 @@ class CurrencyViewModel: ObservableObject {
         }
     }
     
-     public func applyTheme(_ theme: AppTheme) {
+    public func applyTheme(_ theme: AppTheme) {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else {
             return

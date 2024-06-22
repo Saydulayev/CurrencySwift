@@ -14,7 +14,6 @@ struct ContentView: View {
     
     init(viewModel: CurrencyViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
-        viewModel.applyTheme(viewModel.selectedTheme)  
     }
     
     var body: some View {
@@ -36,8 +35,6 @@ struct ContentView: View {
                         
                     }
                     .background(.blue)
-                    
-                    
                     
                     if viewModel.isConverted {
                         SearchCurrencyInputView(viewModel: viewModel)
@@ -63,10 +60,34 @@ struct ContentView: View {
                     BaseCurrencySheetView(viewModel: viewModel)
                         .ignoresSafeArea()
                 }
+                
+                if viewModel.isLoading {
+                    LoadingView()
+                }
+            }
+            .alert(isPresented: $viewModel.showErrorAlert) {
+                Alert(
+                    title: Text("Error"),
+                    message: Text(viewModel.errorMessage ?? "Unknown error occurred"),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
-        .onAppear {
-            viewModel.applyTheme(viewModel.selectedTheme)
+    }
+}
+
+// Индикатор загрузки
+struct LoadingView: View {
+    var body: some View {
+        ZStack {
+            Color(.black).opacity(0.4)
+                .ignoresSafeArea()
+            ProgressView("Loading...")
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                .padding()
+                .background(Color.black)
+                .cornerRadius(10)
+                .foregroundColor(.white)
         }
     }
 }
@@ -213,6 +234,7 @@ struct SearchCurrencyInputView: View {
         }
     }
 }
+
 struct ErrorMessageView: View {
     var errorMessage: String
     
