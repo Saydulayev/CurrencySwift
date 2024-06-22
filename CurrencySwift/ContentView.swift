@@ -171,60 +171,48 @@ struct SearchCurrencyInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
     
     var body: some View {
-        HStack {
-            ZStack(alignment: .trailing) {
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundStyle(.secondary)
-                    TextField("Search...", text: $viewModel.searchText)
-                }
-                .foregroundColor(.primary)
-                .padding(7)
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.blue.opacity(0.5), lineWidth: 1)
-                )
-                .shadow(radius: 5)
-                
-                if !viewModel.searchText.isEmpty {
-                    Button(action: {
-                        withAnimation {
-                            viewModel.searchText = ""
+        VStack {
+            HStack {
+                ZStack(alignment: .trailing) {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.secondary)
+                        TextField("Search...", text: $viewModel.searchText)
+                    }
+                    .foregroundColor(.primary)
+                    .padding(7)
+                    .background(Color(UIColor.secondarySystemBackground))
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.blue.opacity(0.5), lineWidth: 1)
+                    )
+                    .shadow(radius: 5)
+                    
+                    if !viewModel.searchText.isEmpty {
+                        Button(action: {
+                            withAnimation {
+                                viewModel.searchText = ""
+                            }
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.blue)
+                                .padding(.trailing, 10)
                         }
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.blue)
-                            .padding(.trailing, 10)
                     }
                 }
+                .padding(.horizontal)
             }
             
-            Button(action: {
-                withAnimation {
-                    viewModel.filterOption = .favorites
-                }
-            }) {
-                Image(systemName: "star.fill")
-                    .foregroundColor(viewModel.filterOption == .favorites ? .blue : .gray)
+            Picker("Filter", selection: $viewModel.filterOption) {
+                Text("All").tag(FilterOption.all)
+                Text("Favorites").tag(FilterOption.favorites)
             }
-            .padding(.horizontal, 5)
-            
-            Button(action: {
-                withAnimation {
-                    viewModel.filterOption = .all
-                }
-            }) {
-                Image(systemName: "list.bullet")
-                    .foregroundColor(viewModel.filterOption == .all ? .blue : .gray)
-            }
-            .padding(.horizontal, 5)
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
         }
-        .padding(.horizontal)
     }
 }
-
 struct ErrorMessageView: View {
     var errorMessage: String
     
