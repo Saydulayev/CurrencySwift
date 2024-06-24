@@ -331,28 +331,41 @@ class CurrencyViewModel: ObservableObject {
     
     // Calculates percentage change in exchange rate between today and a previous date
     private func calculatePercentageChange(apiKey: String, year: Int, month: Int, day: Int) {
+        let calendar = Calendar.current
+        let todayComponents = calendar.dateComponents([.year, .month, .day], from: Date())
+        
         guard let targetRateToday = self.exchangeRates[self.selectedTargetCurrency] else {
             self.percentageChange = nil
             return
         }
         
-        var dateComponents = DateComponents()
-        dateComponents.year = year
-        dateComponents.month = month
-        dateComponents.day = day - 1
+        var comparisonDateComponents = DateComponents()
         
-        guard let previousDate = Calendar.current.date(from: dateComponents) else {
+        if year == todayComponents.year && month == todayComponents.month && day == todayComponents.day {
+            // If selected date is today, compare with the previous day
+            comparisonDateComponents.year = year
+            comparisonDateComponents.month = month
+            comparisonDateComponents.day = day - 1
+        } else {
+            // If selected date is in the past, compare with today
+            comparisonDateComponents.year = todayComponents.year
+            comparisonDateComponents.month = todayComponents.month
+            comparisonDateComponents.day = todayComponents.day
+        }
+        
+        guard let comparisonDate = calendar.date(from: comparisonDateComponents) else {
             self.percentageChange = nil
             return
         }
         
-        let previousDateComponents = Calendar.current.dateComponents([.year, .month, .day], from: previousDate)
+        let previousDateComponents = calendar.dateComponents([.year, .month, .day], from: comparisonDate)
         guard let prevYear = previousDateComponents.year, let prevMonth = previousDateComponents.month, let prevDay = previousDateComponents.day else {
             self.percentageChange = nil
             return
         }
         
         let urlString = "https://v6.exchangerate-api.com/v6/\(apiKey)/history/\(selectedBaseCurrency)/\(prevYear)/\(prevMonth)/\(prevDay)"
+        
         guard let url = URL(string: urlString) else {
             self.percentageChange = nil
             return
@@ -381,9 +394,10 @@ class CurrencyViewModel: ObservableObject {
                     self.percentageChange = nil
                 }
             }
-        }.resume()
+        }
+        .resume()
     }
-    
+
     // Toggles the favorite status for a given currency
     func toggleFavorite(for currencyCode: String) {
         if let index = currencyRates.firstIndex(where: { $0.code == currencyCode }) {

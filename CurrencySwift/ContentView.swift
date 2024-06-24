@@ -16,6 +16,7 @@ struct HistoricalRatesView: View {
         ZStack {
             Color(.systemGray6)
                 .ignoresSafeArea()
+            
             VStack(spacing: 20) {
                 VStack {
                     DatePicker("Select Date", selection: $viewModel.selectedDate, displayedComponents: .date)
@@ -25,10 +26,10 @@ struct HistoricalRatesView: View {
                         .background(.blue.opacity(0.5))
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .overlay(
-                        RoundedRectangle(cornerRadius: 15)
-                            .stroke(lineWidth: 1.0)
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(lineWidth: 1.0)
                         )
-
+                    
                     HStack {
                         Spacer()
                         Divider()
@@ -42,7 +43,6 @@ struct HistoricalRatesView: View {
                                 }
                             }
                             .pickerStyle(MenuPickerStyle())
-
                         }
                         Divider()
                         VStack(alignment: .center) {
@@ -68,9 +68,9 @@ struct HistoricalRatesView: View {
                                 .padding()
                                 .background(Color(UIColor.secondarySystemBackground))
                                 .overlay(
-                                RoundedRectangle(cornerRadius: 15)
-                                    .stroke(lineWidth: 1.0)
-                                    .foregroundStyle(.secondary)
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .stroke(lineWidth: 1.0)
+                                        .foregroundStyle(.secondary)
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: 15))
                                 .shadow(radius: 5)
@@ -97,12 +97,12 @@ struct HistoricalRatesView: View {
                                     .foregroundColor(viewModel.percentageChange ?? 0 >= 0 ? .green : .red)
                                     .font(.headline)
                             }
-                            
+                            Divider()
                             if let change = viewModel.percentageChange {
                                 HStack {
                                     Text("Change:")
                                     Spacer()
-                                    Text("\(change, specifier: "%.2f")%")
+                                    Text("\(change >= 0 ? "+" : "-")\(abs(change), specifier: "%.2f")%")
                                         .foregroundColor(change >= 0 ? .green : .red)
                                 }
                             }
@@ -131,9 +131,16 @@ struct HistoricalRatesView: View {
             }
             .padding()
             .navigationTitle("Historical Exchange Rates")
+            
+            if viewModel.isLoading {
+                LoadingView()
+            }
         }
     }
 }
+
+
+
 
 
 struct ContentView: View {
@@ -430,6 +437,7 @@ struct BaseCurrencySheetView: View {
                         .cornerRadius(15)
                         .shadow(radius: 5)
                         .onChange(of: viewModel.baseCurrency) { newValue in
+                            viewModel.baseCurrency = newValue.uppercased()
                             viewModel.filterBaseCurrency()
                     }
                     Button(action: {
