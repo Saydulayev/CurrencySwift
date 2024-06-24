@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+
 class CurrencyService: CurrencyServiceProtocol {
     // Статическое свойство для единственного экземпляра
     static let shared = CurrencyService()
@@ -188,7 +189,7 @@ class CurrencyService: CurrencyServiceProtocol {
         "ZWL": "Zimbabwean Dollar"
     ]
 
-    
+
     func fetchRates(base: String) -> AnyPublisher<CurrencyData, Error> {
         let urlString = "\(baseURL)\(apiKey)/latest/\(base)"
         guard let url = URL(string: urlString) else {
@@ -198,9 +199,20 @@ class CurrencyService: CurrencyServiceProtocol {
         return URLSession.shared.dataTaskPublisher(for: url)
             .map(\.data)
             .decode(type: CurrencyData.self, decoder: JSONDecoder())
-            .mapError { error -> Error in
-                return error
-            }
+            .mapError { $0 as Error }
+            .eraseToAnyPublisher()
+    }
+    
+    func fetchHistoricalRates(base: String, year: Int, month: Int, day: Int) -> AnyPublisher<ExchangeRatesResponse, Error> {
+        let urlString = "\(baseURL)\(apiKey)/history/\(base)/\(year)/\(month)/\(day)"
+        guard let url = URL(string: urlString) else {
+            return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
+        }
+        
+        return URLSession.shared.dataTaskPublisher(for: url)
+            .map(\.data)
+            .decode(type: ExchangeRatesResponse.self, decoder: JSONDecoder())
+            .mapError { $0 as Error }
             .eraseToAnyPublisher()
     }
 }

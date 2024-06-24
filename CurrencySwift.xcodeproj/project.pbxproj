@@ -22,6 +22,19 @@
 		C084BF522C19A0FC00E901C5 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084BF512C19A0FB00E901C5 /* ActivityView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		C2DEB1592C28222600D47EE6 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		C0667C602C11A8AD00306D90 /* CurrencySwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CurrencySwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0667C632C11A8AD00306D90 /* CurrencySwiftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySwiftApp.swift; sourceTree = "<group>"; };
@@ -104,12 +117,15 @@
 				C0667C5C2C11A8AD00306D90 /* Sources */,
 				C0667C5D2C11A8AD00306D90 /* Frameworks */,
 				C0667C5E2C11A8AD00306D90 /* Resources */,
+				C2DEB1592C28222600D47EE6 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = CurrencySwift;
+			packageProductDependencies = (
+			);
 			productName = CurrencySwift;
 			productReference = C0667C602C11A8AD00306D90 /* CurrencySwift.app */;
 			productType = "com.apple.product-type.application";
@@ -138,6 +154,8 @@
 				Base,
 			);
 			mainGroup = C0667C572C11A8AD00306D90;
+			packageReferences = (
+			);
 			productRefGroup = C0667C612C11A8AD00306D90 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

@@ -19,12 +19,23 @@ struct CurrencyData: Codable {
     }
 }
 
-
 struct CurrencyRate: Identifiable {
     let id = UUID()
     let code: String
     let rate: Double
     var isFavorite: Bool
     let country: String
+    var percentageChange: Double? 
+}
+
+struct ExchangeRatesResponse: Codable {
+    let result: String
+    let documentation: String
+    let terms_of_use: String
+    let year: Int
+    let month: Int
+    let day: Int
+    let base_code: String
+    let conversion_rates: [String: Double]
 }
 
