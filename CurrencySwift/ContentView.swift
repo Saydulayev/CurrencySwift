@@ -143,9 +143,11 @@ struct HistoricalRatesView: View {
 
 
 
+
 struct ContentView: View {
     @StateObject private var viewModel: CurrencyViewModel
     @State private var showingSettings = false
+    @FocusState private var isFocused: Bool
 
     init(viewModel: CurrencyViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -157,13 +159,13 @@ struct ContentView: View {
                 Color(.systemGray6)
                     .ignoresSafeArea()
                     .onTapGesture {
-                        hideKeyboard()
+                        isFocused = false
                     }
                 
                 VStack(spacing: 20) {
                     VStack {
                         BaseCurrencyInputView(viewModel: viewModel)
-                        AmountInputView(viewModel: viewModel)
+                        AmountInputView(viewModel: viewModel, isFocused: $isFocused)
                         DividerView()
                     }
                     .background(.blue)
@@ -202,6 +204,7 @@ struct ContentView: View {
         }
     }
 }
+
 // Индикатор загрузки
 struct LoadingView: View {
     var body: some View {
@@ -258,9 +261,12 @@ struct BaseCurrencyInputView: View {
     }
 }
 
+
+
 struct AmountInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
-    
+    @FocusState.Binding var isFocused: Bool
+
     var body: some View {
         ZStack(alignment: .trailing) {
             TextField("Amount", value: $viewModel.amount, formatter: NumberFormatter.currencyFormatter)
@@ -270,36 +276,49 @@ struct AmountInputView: View {
                 .cornerRadius(15)
                 .shadow(radius: 5)
                 .keyboardType(.decimalPad)
-                .toolbar {
-                    ToolbarItemGroup(placement: .keyboard) {
-                        Spacer()
-                        Button("Done") {
-                            hideKeyboard()
-                        }
+                .focused($isFocused)
+                .onTapGesture {
+                    isFocused = false
+                }
+            
+            if isFocused {
+                Button("Done") {
+                    isFocused = false
+                }
+                .font(.title2)
+                .foregroundColor(.primary)
+                .padding(14)
+                .padding(.horizontal, 2)
+                .background(.green)
+                .cornerRadius(15)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(Color.primary, lineWidth: 1)
+                )
+            } else {
+                Button(action: {
+                    isFocused = true
+                }) {
+                    if viewModel.baseCurrency.isEmpty {
+                        Image(systemName: "eurosign.arrow.circlepath")
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 1)
+                            
+                    } else {
+                        Text(viewModel.baseCurrency)
                     }
                 }
-            Button(action: {
-                hideKeyboard()
-            }) {
-                if viewModel.baseCurrency.isEmpty {
-                    Image(systemName: "eurosign.arrow.circlepath")
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 1)
-                        
-                } else {
-                    Text(viewModel.baseCurrency)
-                }
+                .font(.title2)
+                .foregroundColor(.primary)
+                .padding(14)
+                .padding(.horizontal, 7)
+                .background(.blue)
+                .cornerRadius(15)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(Color.primary, lineWidth: 1)
+                )
             }
-            .font(.title2)
-            .foregroundColor(.primary)
-            .padding(14)
-            .padding(.horizontal, 7)
-            .background(.blue)
-            .cornerRadius(15)
-            .overlay(
-                RoundedRectangle(cornerRadius: 15)
-                    .stroke(Color.primary, lineWidth: 1)
-            )
         }
         .padding()
     }
@@ -494,11 +513,7 @@ struct BaseCurrencySheetView: View {
     }
 }
 
-extension View {
-    func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
-}
+
 
 extension NumberFormatter {
     static var currencyFormatter: NumberFormatter {
