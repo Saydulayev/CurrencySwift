@@ -197,7 +197,7 @@ struct ContentView: View {
                     }
                 }
                 .sheet(isPresented: $viewModel.isShowingBaseCurrencySheet) {
-                    BaseCurrencySheetView(viewModel: viewModel)
+                    BaseCurrencySheetView(viewModel: viewModel, isFocused: $isFocused)
                         .ignoresSafeArea()
                 }
             }
@@ -222,12 +222,26 @@ struct LoadingView: View {
 }
 
 // MARK: Views
+
+extension View {
+    func animateForever(using animation: Animation = .easeInOut(duration: 1), autoreverses: Bool = false, _ action: @escaping () -> Void) -> some View {
+        let repeated = animation.repeatForever(autoreverses: autoreverses)
+
+        return onAppear {
+            withAnimation(repeated) {
+                action()
+            }
+        }
+    }
+}
+
 struct BaseCurrencyInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
+    @State private var scale: CGFloat = 1.0
     
     var body: some View {
         ZStack(alignment: .trailing) {
-            TextField("Select Base Currency...", text: $viewModel.baseCurrency)
+            TextField("", text: $viewModel.baseCurrency)
                 .foregroundColor(.primary)
                 .padding()
                 .background(Color(UIColor.secondarySystemBackground))
@@ -238,6 +252,21 @@ struct BaseCurrencyInputView: View {
                         viewModel.isShowingBaseCurrencySheet = true
                     }
                 }
+                .overlay(
+                    HStack {
+                        if viewModel.baseCurrency.isEmpty {
+                            Image(systemName: "hand.tap")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.secondary)
+                                .scaleEffect(scale)
+                                .animateForever(autoreverses: true) {
+                                    scale = scale == 1.0 ? 1.1 : 1.0
+                                }
+                                .padding(.leading, 15)
+                        }
+                        Spacer()
+                    }
+                )
             
             Button(action: {
                 withAnimation(.easeInOut) {
@@ -287,8 +316,8 @@ struct AmountInputView: View {
                 }
                 .font(.title2)
                 .foregroundColor(.primary)
-                .padding(14)
-                .padding(.horizontal, 2)
+                .padding(.vertical, 14.5)
+                .padding(.horizontal, 16)
                 .background(.green)
                 .cornerRadius(15)
                 .overlay(
@@ -442,8 +471,11 @@ struct CurrencyRateRowView: View {
     }
 }
 
+import SwiftUI
+
 struct BaseCurrencySheetView: View {
     @ObservedObject var viewModel: CurrencyViewModel
+    @FocusState.Binding var isFocused: Bool
     
     var body: some View {
         VStack {
@@ -455,13 +487,15 @@ struct BaseCurrencySheetView: View {
                         .background(Color(UIColor.secondarySystemBackground))
                         .cornerRadius(15)
                         .shadow(radius: 5)
+                        .focused($isFocused)
                         .onChange(of: viewModel.baseCurrency) { newValue in
                             viewModel.baseCurrency = newValue.uppercased()
                             viewModel.filterBaseCurrency()
-                    }
+                        }
                     Button(action: {
                         withAnimation {
                             viewModel.baseCurrency = ""
+                            isFocused = false
                         }
                     }) {
                         Image(systemName: "xmark.circle.fill")
@@ -475,6 +509,7 @@ struct BaseCurrencySheetView: View {
                         viewModel.baseCurrency = ""
                         viewModel.filteredBaseCurrencies = Array(viewModel.allCurrencies.keys).sorted()
                         viewModel.isShowingBaseCurrencySheet = false
+                        isFocused = false
                     }
                 }
                 .padding()
@@ -499,6 +534,7 @@ struct BaseCurrencySheetView: View {
                                     withAnimation {
                                         viewModel.baseCurrency = currency
                                         viewModel.isShowingBaseCurrencySheet = false
+                                        isFocused = false
                                     }
                                 }
                             Divider()
