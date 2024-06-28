@@ -8,7 +8,70 @@
 import SwiftUI
 
 
+struct ContentView: View {
+    @StateObject private var viewModel: CurrencyViewModel
+    @State private var showingSettings = false
+    @FocusState private var isFocused: Bool
 
+    init(viewModel: CurrencyViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    var body: some View {
+        NavigationView {
+            ZStack {
+                Color(.systemGray6)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        isFocused = false
+                    }
+                
+                VStack(spacing: 20) {
+                    VStack {
+                        BaseCurrencyInputView(viewModel: viewModel)
+                        AmountInputView(viewModel: viewModel, isFocused: $isFocused)
+                        DividerView()
+                    }
+                    .background(.blue)
+                    
+                    if viewModel.isConverted {
+                        SearchCurrencyInputView(viewModel: viewModel)
+                    }
+                    
+                    if let errorMessage = viewModel.errorMessage {
+                        ErrorMessageView(errorMessage: errorMessage)
+                    }
+                    
+                    CurrencyRatesListView(viewModel: viewModel)
+                }
+                .navigationTitle("Currency Converter 💱")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        NavigationLink(destination: HistoricalRatesView(viewModel: viewModel)) {
+                            Image(systemName: "chart.bar.xaxis")
+                                .foregroundColor(.primary)
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(destination: SettingsView(viewModel: viewModel)) {
+                            Image(systemName: "circle.grid.2x2.fill")
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
+                .sheet(isPresented: $viewModel.isShowingBaseCurrencySheet) {
+                    BaseCurrencySheetView(viewModel: viewModel, isFocused: $isFocused)
+                        .ignoresSafeArea()
+                }
+            }
+        }
+    }
+}
+
+
+
+// MARK: Views
 struct HistoricalRatesView: View {
     @ObservedObject var viewModel: CurrencyViewModel
     
@@ -139,73 +202,6 @@ struct HistoricalRatesView: View {
     }
 }
 
-
-
-
-
-
-struct ContentView: View {
-    @StateObject private var viewModel: CurrencyViewModel
-    @State private var showingSettings = false
-    @FocusState private var isFocused: Bool
-
-    init(viewModel: CurrencyViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
-
-    var body: some View {
-        NavigationView {
-            ZStack {
-                Color(.systemGray6)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        isFocused = false
-                    }
-                
-                VStack(spacing: 20) {
-                    VStack {
-                        BaseCurrencyInputView(viewModel: viewModel)
-                        AmountInputView(viewModel: viewModel, isFocused: $isFocused)
-                        DividerView()
-                    }
-                    .background(.blue)
-                    
-                    if viewModel.isConverted {
-                        SearchCurrencyInputView(viewModel: viewModel)
-                    }
-                    
-                    if let errorMessage = viewModel.errorMessage {
-                        ErrorMessageView(errorMessage: errorMessage)
-                    }
-                    
-                    CurrencyRatesListView(viewModel: viewModel)
-                }
-                .navigationTitle("Currency Converter 💱")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        NavigationLink(destination: HistoricalRatesView(viewModel: viewModel)) {
-                            Image(systemName: "chart.bar.xaxis")
-                                .foregroundColor(.primary)
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: SettingsView(viewModel: viewModel)) {
-                            Image(systemName: "circle.grid.2x2.fill")
-                                .foregroundColor(.primary)
-                        }
-                    }
-                }
-                .sheet(isPresented: $viewModel.isShowingBaseCurrencySheet) {
-                    BaseCurrencySheetView(viewModel: viewModel, isFocused: $isFocused)
-                        .ignoresSafeArea()
-                }
-            }
-        }
-    }
-}
-
-// Индикатор загрузки
 struct LoadingView: View {
     var body: some View {
         ZStack {
@@ -221,52 +217,36 @@ struct LoadingView: View {
     }
 }
 
-// MARK: Views
-
-extension View {
-    func animateForever(using animation: Animation = .easeInOut(duration: 1), autoreverses: Bool = false, _ action: @escaping () -> Void) -> some View {
-        let repeated = animation.repeatForever(autoreverses: autoreverses)
-
-        return onAppear {
-            withAnimation(repeated) {
-                action()
-            }
-        }
-    }
-}
-
 struct BaseCurrencyInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
     @State private var scale: CGFloat = 1.0
     
     var body: some View {
         ZStack(alignment: .trailing) {
-            TextField("", text: $viewModel.baseCurrency)
-                .foregroundColor(.primary)
+            Button(action: {
+                withAnimation {
+                    viewModel.isShowingBaseCurrencySheet = true
+                }
+            }) {
+                HStack {
+                    if viewModel.baseCurrency.isEmpty {
+                        Image(systemName: "hand.tap")
+                        .foregroundColor(.gray)
+                            .scaleEffect(scale)
+                            .animateForever(autoreverses: true) {
+                                scale = scale == 1.0 ? 1.1 : 1.0
+                            }
+                    } else {
+                        Text(viewModel.baseCurrency)
+                            .foregroundColor(.primary)
+                    }
+                    Spacer()
+                }
                 .padding()
                 .background(Color(UIColor.secondarySystemBackground))
                 .cornerRadius(15)
                 .shadow(radius: 5)
-                .onTapGesture {
-                    withAnimation {
-                        viewModel.isShowingBaseCurrencySheet = true
-                    }
-                }
-                .overlay(
-                    HStack {
-                        if viewModel.baseCurrency.isEmpty {
-                            Image(systemName: "hand.tap")
-                                .font(.system(size: 20))
-                                .foregroundStyle(.secondary)
-                                .scaleEffect(scale)
-                                .animateForever(autoreverses: true) {
-                                    scale = scale == 1.0 ? 1.1 : 1.0
-                                }
-                                .padding(.leading, 15)
-                        }
-                        Spacer()
-                    }
-                )
+            }
             
             Button(action: {
                 withAnimation(.easeInOut) {
@@ -289,8 +269,6 @@ struct BaseCurrencyInputView: View {
         .padding()
     }
 }
-
-
 
 struct AmountInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
@@ -364,47 +342,47 @@ struct DividerView: View {
 
 struct SearchCurrencyInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
-    
+
     var body: some View {
         VStack {
-            HStack {
-                ZStack(alignment: .trailing) {
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundStyle(.secondary)
-                        TextField("Search...", text: $viewModel.searchText)
-                    }
-                    .foregroundColor(.primary)
-                    .padding(7)
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(10)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.blue.opacity(0.5), lineWidth: 1)
-                    )
-                    .shadow(radius: 5)
-                    
-                    if !viewModel.searchText.isEmpty {
-                        Button(action: {
-                            withAnimation {
-                                viewModel.searchText = ""
-                            }
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.blue)
-                                .padding(.trailing, 10)
+            ZStack(alignment: .trailing) {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.secondary)
+                    TextField("Search...", text: $viewModel.searchText)
+                        .padding(.vertical, 7)
+                }
+                .foregroundColor(.primary)
+                .padding(.horizontal, 7)
+                .background(Color(UIColor.secondarySystemBackground))
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.blue.opacity(0.5), lineWidth: 1)
+                )
+                .shadow(radius: 5)
+
+                if !viewModel.searchText.isEmpty {
+                    Button(action: {
+                        withAnimation {
+                            viewModel.searchText = ""
                         }
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.blue)
+                            .padding(.trailing, 10)
                     }
                 }
-                .padding(.horizontal)
             }
-            
+            .padding(.horizontal)
+
             Picker("Filter", selection: $viewModel.filterOption) {
                 Text("All").tag(FilterOption.all)
                 Text("Favorites").tag(FilterOption.favorites)
             }
             .pickerStyle(.segmented)
             .padding(.horizontal)
+            .padding(.top, 7)
         }
     }
 }
@@ -463,15 +441,13 @@ struct CurrencyRateRowView: View {
         }
         .padding()
         .background(Color(UIColor.secondarySystemBackground))
-        .cornerRadius(15)
+        .cornerRadius(10)
         .shadow(radius: 3)
         .padding(.horizontal)
         .padding(.vertical, 5)
         .transition(.opacity)
     }
 }
-
-import SwiftUI
 
 struct BaseCurrencySheetView: View {
     @ObservedObject var viewModel: CurrencyViewModel
@@ -550,6 +526,17 @@ struct BaseCurrencySheetView: View {
 }
 
 
+extension View {
+    func animateForever(using animation: Animation = .easeInOut(duration: 1), autoreverses: Bool = false, _ action: @escaping () -> Void) -> some View {
+        let repeated = animation.repeatForever(autoreverses: autoreverses)
+
+        return onAppear {
+            withAnimation(repeated) {
+                action()
+            }
+        }
+    }
+}
 
 extension NumberFormatter {
     static var currencyFormatter: NumberFormatter {
