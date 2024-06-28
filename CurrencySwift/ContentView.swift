@@ -386,12 +386,21 @@ struct CurrencyRatesListView: View {
     @ObservedObject var viewModel: CurrencyViewModel
     
     var body: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(viewModel.filteredCurrencyRates) { currencyRate in
-                    CurrencyRateRowView(currencyRate: currencyRate, viewModel: viewModel)
+        ZStack {
+            ScrollView {
+                LazyVStack {
+                    ForEach(viewModel.filteredCurrencyRates) { currencyRate in
+                        CurrencyRateRowView(currencyRate: currencyRate, viewModel: viewModel)
+                    }
                 }
             }
+            
+            if viewModel.isLoading {
+                LoadingView()
+            }
+        }
+        .alert(isPresented: $viewModel.showErrorAlert) {
+            Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? "Unknown error"), dismissButton: .default(Text("OK")))
         }
     }
 }

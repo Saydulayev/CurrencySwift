@@ -272,6 +272,7 @@ class CurrencyViewModel: ObservableObject {
     func fetchRates(for base: String) {
         guard !base.isEmpty else {
             self.errorMessage = "Base currency cannot be empty"
+            self.showErrorAlert = true
             return
         }
         
@@ -285,7 +286,7 @@ class CurrencyViewModel: ObservableObject {
                 guard let self = self else { return }
                 self.isLoading = false
                 if case let .failure(error) = completion {
-                    self.errorMessage = error.localizedDescription
+                    self.errorMessage = "Network error: \(error.localizedDescription)"
                     self.showErrorAlert = true
                 }
             } receiveValue: { [weak self] data in
@@ -302,7 +303,6 @@ class CurrencyViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
     // Fetches historical exchange rates for a selected date
     func fetchHistoricalRates() {
         let calendar = Calendar.current
