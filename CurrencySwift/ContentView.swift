@@ -202,21 +202,6 @@ struct HistoricalRatesView: View {
     }
 }
 
-struct LoadingView: View {
-    var body: some View {
-        ZStack {
-            Color(.black).opacity(0.4)
-                .ignoresSafeArea()
-            ProgressView("Loading...")
-                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                .padding()
-                .background(Color.black)
-                .cornerRadius(10)
-                .foregroundColor(.white)
-        }
-    }
-}
-
 struct BaseCurrencyInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
     @State private var scale: CGFloat = 1.0
@@ -274,9 +259,11 @@ struct AmountInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
     @FocusState.Binding var isFocused: Bool
 
+    @State private var amountString: String = ""
+
     var body: some View {
         ZStack(alignment: .trailing) {
-            TextField("Amount", value: $viewModel.amount, formatter: NumberFormatter.currencyFormatter)
+            TextField("Amount", text: $amountString)
                 .foregroundColor(.primary)
                 .padding()
                 .background(Color(UIColor.secondarySystemBackground))
@@ -284,10 +271,14 @@ struct AmountInputView: View {
                 .shadow(radius: 5)
                 .keyboardType(.decimalPad)
                 .focused($isFocused)
-                .onTapGesture {
-                    isFocused = false
+                .onChange(of: amountString) { newValue in
+                    let filtered = newValue.filter { "0123456789.,".contains($0) }
+                    if let value = NumberFormatter.currencyFormatter.number(from: filtered)?.doubleValue {
+                        viewModel.amount = value
+                    }
+                    amountString = filtered
                 }
-            
+
             if isFocused {
                 Button("Done") {
                     isFocused = false
@@ -310,7 +301,6 @@ struct AmountInputView: View {
                         Image(systemName: "eurosign.arrow.circlepath")
                             .padding(.horizontal, 7)
                             .padding(.vertical, 1)
-                            
                     } else {
                         Text(viewModel.baseCurrency)
                     }
@@ -328,15 +318,9 @@ struct AmountInputView: View {
             }
         }
         .padding()
-    }
-}
-
-struct DividerView: View {
-    var body: some View {
-        Rectangle()
-            .frame(height: 2)
-            .frame(maxWidth: .infinity)
-            .foregroundColor(.primary)
+        .onAppear {
+            amountString = NumberFormatter.currencyFormatter.string(from: NSNumber(value: viewModel.amount)) ?? ""
+        }
     }
 }
 
@@ -525,7 +509,32 @@ struct BaseCurrencySheetView: View {
     }
 }
 
+struct LoadingView: View {
+    var body: some View {
+        ZStack {
+            Color(.black).opacity(0.4)
+                .ignoresSafeArea()
+            ProgressView("Loading...")
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                .padding()
+                .background(Color.black)
+                .cornerRadius(10)
+                .foregroundColor(.white)
+        }
+    }
+}
 
+struct DividerView: View {
+    var body: some View {
+        Rectangle()
+            .frame(height: 2)
+            .frame(maxWidth: .infinity)
+            .foregroundColor(.primary)
+    }
+}
+
+
+// MARK: Extensions
 extension View {
     func animateForever(using animation: Animation = .easeInOut(duration: 1), autoreverses: Bool = false, _ action: @escaping () -> Void) -> some View {
         let repeated = animation.repeatForever(autoreverses: autoreverses)
@@ -542,6 +551,7 @@ extension NumberFormatter {
     static var currencyFormatter: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 0
         formatter.maximumFractionDigits = 2
         return formatter
     }
