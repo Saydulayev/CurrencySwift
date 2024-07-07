@@ -14,6 +14,8 @@ struct CurrencySwiftApp: App {
         sortingStrategy: FavoriteFirstSortingStrategy()
     )
 
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     var body: some Scene {
         WindowGroup {
             ContentView(viewModel: viewModel)
@@ -27,3 +29,12 @@ struct CurrencySwiftApp: App {
     }
 }
 
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+        
+    static var orientationLock = UIInterfaceOrientationMask.portrait 
+
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return AppDelegate.orientationLock
+    }
+}

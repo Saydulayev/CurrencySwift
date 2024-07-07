@@ -32,8 +32,8 @@ struct ContentView: View {
                         AmountInputView(viewModel: viewModel, isFocused: $isFocused)
                         DividerView()
                     }
-                    .background(.blue)
-                    
+                    .background(Color.blue.opacity(0.3))
+
                     if viewModel.isConverted {
                         SearchCurrencyInputView(viewModel: viewModel)
                     }
@@ -223,13 +223,13 @@ struct BaseCurrencyInputView: View {
                             }
                     } else {
                         Text(viewModel.baseCurrency)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.blue)
                     }
                     Spacer()
                 }
                 .padding()
                 .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(15)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
                 .shadow(radius: 5)
             }
             
@@ -244,7 +244,7 @@ struct BaseCurrencyInputView: View {
                     .padding(13)
                     .padding(.horizontal, 15)
                     .background(.blue)
-                    .cornerRadius(15)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
                     .overlay(
                         RoundedRectangle(cornerRadius: 15)
                             .stroke(Color.primary, lineWidth: 1)
@@ -264,7 +264,7 @@ struct AmountInputView: View {
     var body: some View {
         ZStack(alignment: .trailing) {
             TextField("Amount", text: $amountString)
-                .foregroundColor(.primary)
+                .foregroundColor(.blue)
                 .padding()
                 .background(Color(UIColor.secondarySystemBackground))
                 .cornerRadius(15)
@@ -339,7 +339,7 @@ struct SearchCurrencyInputView: View {
                 .foregroundColor(.primary)
                 .padding(.horizontal, 7)
                 .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(10)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.blue.opacity(0.5), lineWidth: 1)
