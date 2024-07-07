@@ -1,3 +1,8 @@
+## Demo Video
+
+
+[Watch the video](https://vimeo.com/980035926)
+
 # CurrencySwift
 
 CurrencySwift is an iOS application for real-time currency conversion. It leverages the latest SwiftUI framework to provide a modern and responsive user interface. The app is designed with a clean and intuitive layout, allowing users to easily convert between different currencies and view up-to-date exchange rates.
