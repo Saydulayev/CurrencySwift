@@ -15,6 +15,8 @@ CurrencySwift is an iOS application for real-time currency conversion. It levera
 - Mark favorite currencies for quick access
 - Light and dark mode support
 - Adaptive UI for different themes
+- **Offline mode support**: View previously loaded exchange rates when offline
+- **Historical data tracking**: Check how much any currency was worth a week ago or at any other specified date
 
 ## Frameworks and Libraries Used
 
@@ -22,6 +24,7 @@ CurrencySwift is an iOS application for real-time currency conversion. It levera
 ### Combine
 ### URLSession
 ### ExchangeRate-API
+###Network
 
 
 ## Getting Started
@@ -90,5 +93,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 **Note**: This project is under active development. Features and UI are subject to change as development progresses.
-
-
