@@ -22,21 +22,17 @@ enum FilterOption {
 
 class CurrencyViewModel: ObservableObject {
     
+    @ObservedObject private var networkMonitor = NetworkMonitor()
+    
+    var isConnected: Bool {
+        networkMonitor.isConnected
+    }
+    
     @Published var currencyRates: [CurrencyRate] = []
     @Published var filteredCurrencyRates: [CurrencyRate] = []
     @Published var errorMessage: String?
     
-//    @AppStorage("baseCurrency") var baseCurrency: String = "USD" {
-//        didSet {
-//            filterBaseCurrency()
-//        }
-//    }
-//    
-//    @AppStorage("selectedTheme") var selectedTheme: AppTheme = .system {
-//        didSet {
-//            applyTheme(selectedTheme)
-//        }
-//    }
+
     @Published var favorites: [String] = [] {
         didSet {
             saveFavorites()
@@ -270,39 +266,60 @@ class CurrencyViewModel: ObservableObject {
     
     // Fetches exchange rates for a given base currency
     func fetchRates(for base: String) {
-        guard !base.isEmpty else {
-            self.errorMessage = "Base currency cannot be empty"
-            self.showErrorAlert = true
-            return
-        }
-        
-        self.isLoading = true
-        self.showErrorAlert = false
-        
-        currencyService.fetchRates(base: base)
-            .timeout(.seconds(10), scheduler: DispatchQueue.main)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] completion in
-                guard let self = self else { return }
-                self.isLoading = false
-                if case let .failure(error) = completion {
-                    self.errorMessage = "Network error: \(error.localizedDescription)"
-                    self.showErrorAlert = true
-                }
-            } receiveValue: { [weak self] data in
-                guard let self = self else { return }
-                self.isLoading = false
-                self.errorMessage = nil
-                self.currencyRates = data.conversionRates.map { (key, value) in
-                    let country = self.allCurrencies[key] ?? "Unknown"
-                    return CurrencyRate(code: key, rate: value, isFavorite: self.favorites.contains(key), country: country)
-                }
-                self.sortCurrencyRates()
-                self.filterCurrencies()
-                self.isConverted = true
+            guard !base.isEmpty else {
+                self.errorMessage = "Base currency cannot be empty"
+                self.showErrorAlert = true
+                return
             }
-            .store(in: &cancellables)
-    }
+            
+            self.isLoading = true
+            self.showErrorAlert = false
+            
+            if networkMonitor.isConnected {
+                currencyService.fetchRates(base: base)
+                    .timeout(.seconds(10), scheduler: DispatchQueue.main)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self] completion in
+                        guard let self = self else { return }
+                        self.isLoading = false
+                        if case let .failure(error) = completion {
+                            self.errorMessage = "Network error: \(error.localizedDescription)"
+                            self.showErrorAlert = true
+                        }
+                    } receiveValue: { [weak self] data in
+                        guard let self = self else { return }
+                        self.isLoading = false
+                        self.errorMessage = nil
+                        self.currencyRates = data.conversionRates.map { (key, value) in
+                            let country = self.allCurrencies[key] ?? "Unknown"
+                            return CurrencyRate(code: key, rate: value, isFavorite: self.favorites.contains(key), country: country)
+                        }
+                        self.saveRatesToUserDefaults(data.conversionRates)
+                        self.saveLastUpdateTime()
+                        self.sortCurrencyRates()
+                        self.filterCurrencies()
+                        self.isConverted = true
+                    }
+                    .store(in: &cancellables)
+            } else {
+                if let savedRates = loadRatesFromUserDefaults() {
+                    self.currencyRates = savedRates.map { (key, value) in
+                        let country = self.allCurrencies[key] ?? "Unknown"
+                        return CurrencyRate(code: key, rate: value, isFavorite: self.favorites.contains(key), country: country)
+                    }
+                    self.sortCurrencyRates()
+                    self.filterCurrencies()
+                    self.isConverted = true
+                    self.isLoading = false
+                } else {
+                    self.errorMessage = "No internet connection and no saved data available"
+                    self.showErrorAlert = true
+                    self.isLoading = false
+                }
+            }
+        }
+    
+    
     // Fetches historical exchange rates for a selected date
     func fetchHistoricalRates() {
         let calendar = Calendar.current
@@ -487,6 +504,26 @@ class FavoriteFirstSortingStrategy: SortingStrategy {
     }
 }
 
+extension CurrencyViewModel {
+    private func saveRatesToUserDefaults(_ rates: [String: Double]) {
+        UserDefaults.standard.set(rates, forKey: "savedRates")
+    }
+
+    private func loadRatesFromUserDefaults() -> [String: Double]? {
+        return UserDefaults.standard.dictionary(forKey: "savedRates") as? [String: Double]
+    }
+}
+
+extension CurrencyViewModel {
+    private func saveLastUpdateTime() {
+        let currentTime = Date()
+        UserDefaults.standard.set(currentTime, forKey: "lastUpdateTime")
+    }
+    
+    public func loadLastUpdateTime() -> Date? {
+        return UserDefaults.standard.object(forKey: "lastUpdateTime") as? Date
+    }
+}
 
 
 //.delay(for: .seconds(2), scheduler: DispatchQueue.main) // добавлена задержка для отображения индикатора загрузки

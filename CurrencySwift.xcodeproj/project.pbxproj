@@ -20,6 +20,7 @@
 		C084BF4E2C19953000E901C5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084BF4D2C19953000E901C5 /* SettingsView.swift */; };
 		C084BF502C199C2900E901C5 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084BF4F2C199C2800E901C5 /* MailView.swift */; };
 		C084BF522C19A0FC00E901C5 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084BF512C19A0FB00E901C5 /* ActivityView.swift */; };
+		C2D5A6262C3E82D00035C27B /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D5A6252C3E82D00035C27B /* NetworkMonitor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,6 +51,7 @@
 		C084BF4D2C19953000E901C5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C084BF4F2C199C2800E901C5 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 		C084BF512C19A0FB00E901C5 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
+		C2D5A6252C3E82D00035C27B /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +93,7 @@
 				C0667C7F2C11D72D00306D90 /* Secrets.template.swift */,
 				C084BF4D2C19953000E901C5 /* SettingsView.swift */,
 				C084BF4F2C199C2800E901C5 /* MailView.swift */,
+				C2D5A6252C3E82D00035C27B /* NetworkMonitor.swift */,
 				C084BF512C19A0FB00E901C5 /* ActivityView.swift */,
 				C0667C712C11AA4700306D90 /* .gitignore */,
 				C0667C672C11A8AE00306D90 /* Assets.xcassets */,
@@ -183,6 +186,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2D5A6262C3E82D00035C27B /* NetworkMonitor.swift in Sources */,
 				C0667C782C11AB3500306D90 /* CurrencyService.swift in Sources */,
 				C084BF4E2C19953000E901C5 /* SettingsView.swift in Sources */,
 				C0667C7A2C11AB4F00306D90 /* CurrencyViewModel.swift in Sources */,
