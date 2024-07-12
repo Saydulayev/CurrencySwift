@@ -79,7 +79,6 @@ struct OfflineDataView: View {
     
     var body: some View {
         if let lastUpdateTime = lastUpdateTime {
-            let timeSinceUpdate = Date().timeIntervalSince(lastUpdateTime)
             let formatter = RelativeDateTimeFormatter()
             let timeString = formatter.localizedString(for: lastUpdateTime, relativeTo: Date())
             
@@ -452,7 +451,7 @@ struct CurrencyRateRowView: View {
                     .font(.headline)
                     .foregroundColor(.primary)
                 HStack {
-                    Text(String(format: "%.2f", currencyRate.rate * viewModel.amount))
+                    Text(formattedRate(currencyRate.rate * viewModel.amount))
                     Text(currencyRate.code)
                 }
                 .font(.subheadline).bold()
@@ -475,6 +474,18 @@ struct CurrencyRateRowView: View {
         .padding(.horizontal)
         .padding(.vertical, 5)
         .transition(.opacity)
+    }
+    
+    private func formattedRate(_ rate: Double) -> String {
+        if rate >= 1 {
+            return String(format: "%.2f", rate)
+        } else if rate >= 0.1 {
+            return String(format: "%.4f", rate)
+        } else if rate >= 0.01 {
+            return String(format: "%.6f", rate)
+        } else {
+            return String(format: "%.8f", rate)
+        }
     }
 }
 
