@@ -18,7 +18,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color(.systemGray6)
                     .ignoresSafeArea()
@@ -567,16 +567,12 @@ struct BaseCurrencySheetView: View {
 
 struct LoadingView: View {
     var body: some View {
-        ZStack {
-            Color(.black).opacity(0.4)
-                .ignoresSafeArea()
             ProgressView("Loading...")
                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
                 .padding()
                 .background(Color.black)
                 .cornerRadius(10)
                 .foregroundColor(.white)
-        }
     }
 }
 
