@@ -86,121 +86,124 @@ struct HistoricalRatesView: View {
         ZStack {
             Color(.systemGray6)
                 .ignoresSafeArea()
-            
-            VStack(spacing: 20) {
-                VStack {
-                    DatePicker("Select Date", selection: $viewModel.selectedDate, displayedComponents: .date)
-                        .datePickerStyle(.graphical)
-                        .foregroundColor(.primary)
-                        .padding()
-                        .background(.blue.opacity(0.5))
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 15)
-                                .stroke(lineWidth: 1.0)
-                        )
-                    
-                    HStack {
-                        Spacer()
-                        Divider()
-                        VStack(alignment: .center) {
-                            Text("Base Currency")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            Picker("Select Base Currency", selection: $viewModel.selectedBaseCurrency) {
-                                ForEach(viewModel.allCurrencies.keys.sorted(), id: \.self) { currencyCode in
-                                    Text(currencyCode).tag(currencyCode)
+            ScrollView {
+                VStack(spacing: 20) {
+                    VStack {
+                        DatePicker("Select Date", selection: $viewModel.selectedDate, displayedComponents: .date)
+                            .datePickerStyle(.graphical)
+                            .foregroundColor(.primary)
+                            .padding()
+                            .background(.blue.opacity(0.5))
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15)
+                                    .stroke(lineWidth: 1.0)
+                            )
+                        
+                        HStack {
+                            Spacer()
+                            Divider()
+                            VStack(alignment: .center) {
+                                Text("Base")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                Picker("Select Base Currency", selection: $viewModel.selectedBaseCurrency) {
+                                    ForEach(viewModel.allCurrencies.keys.sorted(), id: \.self) { currencyCode in
+                                        Text(currencyCode).tag(currencyCode)
+                                    }
                                 }
-                            }
-                            .pickerStyle(MenuPickerStyle())
-                        }
-                        Divider()
-                        VStack(alignment: .center) {
-                            Text("Target Currency")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            Picker("Select Target Currency", selection: $viewModel.selectedTargetCurrency) {
-                                ForEach(viewModel.allCurrencies.keys.sorted(), id: \.self) { currencyCode in
-                                    Text(currencyCode).tag(currencyCode)
-                                }
-                            }
-                            .pickerStyle(MenuPickerStyle())
-                        }
-                        Divider()
-                        Spacer()
-                        Spacer()
-                        Button(action: {
-                            viewModel.fetchHistoricalRates()
-                        }) {
-                            Image(systemName: "chart.line.uptrend.xyaxis.circle")
-                                .font(.largeTitle)
-                                .foregroundColor(.blue)
-                                .padding()
-                                .background(Color(UIColor.secondarySystemBackground))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .stroke(lineWidth: 1.0)
-                                        .foregroundStyle(.secondary)
-                                )
-                                .clipShape(RoundedRectangle(cornerRadius: 15))
-                                .shadow(radius: 5)
-                        }
-                        Spacer()
-                    }
-                    .foregroundColor(.primary)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(15)
-                    .shadow(radius: 5)
-                    .padding(.vertical)
-                }
-                Divider()
-                VStack {
-                    if let rate = viewModel.exchangeRates[viewModel.selectedTargetCurrency] {
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack {
-                                Text("\(viewModel.selectedTargetCurrency):")
-                                    .font(.headline)
-                                Spacer()
-                                Text("\(rate, specifier: "%.4f")")
-                                    .foregroundColor(viewModel.percentageChange ?? 0 >= 0 ? .green : .red)
-                                    .font(.headline)
+                                .pickerStyle(MenuPickerStyle())
                             }
                             Divider()
-                            if let change = viewModel.percentageChange {
-                                HStack {
-                                    Text("Change:")
-                                    Spacer()
-                                    Text("\(change >= 0 ? "+" : "-")\(abs(change), specifier: "%.2f")%")
-                                        .foregroundColor(change >= 0 ? .green : .red)
+                            VStack(alignment: .center) {
+                                Text("Target")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                Picker("Select Target Currency", selection: $viewModel.selectedTargetCurrency) {
+                                    ForEach(viewModel.allCurrencies.keys.sorted(), id: \.self) { currencyCode in
+                                        Text(currencyCode).tag(currencyCode)
+                                    }
                                 }
+                                .pickerStyle(MenuPickerStyle())
                             }
+                            Divider()
+                            Spacer()
+                            Spacer()
+                            Button(action: {
+                                viewModel.fetchHistoricalRates()
+                            }) {
+                                Image(systemName: "chart.line.uptrend.xyaxis.circle")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.blue)
+                                    .padding()
+                                    .background(Color(UIColor.secondarySystemBackground))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .stroke(lineWidth: 1.0)
+                                            .foregroundStyle(.secondary)
+                                    )
+                                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                                    .shadow(radius: 5)
+                            }
+                            Spacer()
                         }
                         .foregroundColor(.primary)
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(Color(UIColor.secondarySystemBackground))
-                        .cornerRadius(15)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
                         .shadow(radius: 5)
                         .padding(.vertical)
-                    } else {
-                        Text("No data available for the selected currency")
+                    }
+                    Divider()
+                    VStack {
+                        if let rate = viewModel.exchangeRates[viewModel.selectedTargetCurrency] {
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Text("\(viewModel.selectedTargetCurrency):")
+                                        .font(.headline)
+                                    Spacer()
+                                    Text("\(rate, specifier: "%.4f")")
+                                        .foregroundColor(viewModel.percentageChange ?? 0 >= 0 ? .green : .red)
+                                        .font(.headline)
+                                }
+//                                Divider()
+//                                if let change = viewModel.percentageChange {
+//                                    HStack {
+//                                        Text("Change:")
+//                                        Spacer()
+//                                        Text("\(change >= 0 ? "+" : "-")\(abs(change), specifier: "%.2f")%")
+//                                            .foregroundColor(change >= 0 ? .green : .red)
+//                                    }
+//                                }
+                            }
                             .foregroundColor(.primary)
                             .padding()
-                            .padding(.vertical)
+
                             .frame(maxWidth: .infinity)
                             .background(Color(UIColor.secondarySystemBackground))
-                            .cornerRadius(15)
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
                             .shadow(radius: 5)
                             .padding(.vertical)
+                        } else {
+                            Text("No data available for the selected currency")
+                                .foregroundColor(.primary)
+                                .padding()
+                                .padding(.vertical)
+                                .frame(maxWidth: .infinity)
+                                .background(Color(UIColor.secondarySystemBackground))
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                                .padding(.vertical)
+                        }
+                        Spacer()
+                        Spacer()
                     }
-                    Spacer()
-                    Spacer()
                 }
+                .padding()
+                .navigationTitle("Historical Exchange Rates")
             }
-            .padding()
-            .navigationTitle("Historical Exchange Rates")
+
             
             if viewModel.isLoading {
                 LoadingView()
@@ -294,7 +297,6 @@ struct BaseCurrencyInputView: View {
         .padding()
     }
 }
-
 
 struct AmountInputView: View {
     @ObservedObject var viewModel: CurrencyViewModel
@@ -445,7 +447,7 @@ struct CurrencyRatesListView: View {
             if showTopBorder {
                 Rectangle()
                     .fill(LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0.3), Color.clear]), startPoint: .top, endPoint: .bottom))
-                    .frame(height: 1)
+                    .frame(height: 10)
                     .frame(maxWidth: .infinity)
                     .zIndex(1)
             }
@@ -456,8 +458,6 @@ struct CurrencyRatesListView: View {
         }
     }
 }
-
-
 
 struct CurrencyRateRowView: View {
     var currencyRate: CurrencyRate
